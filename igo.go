@@ -28,48 +28,48 @@ func main() {
 	var responded bool = false
 	for !responded {
 		fmt.Println("Would you like to host or connect? (h/c)")
-		fmt.Scanf("%v", &response)
-		if response[0] == 'h' {
+		fmt.Scanln(&response)
+		if response == "h" {
 			responded = true
 			//connectionType = 0
 			createServer()
-		} else if response[0] == 'c' {
+		} else if response == "c" {
 			responded = true
 			//connectionType = 1
 			join()
 		} else {
 			fmt.Println("Did not specify connection type!")
 		}
+
 	}
 
 }
 
-func createServer() (int, net.Conn) {
+func createServer() int {
 	fmt.Println("Starting server on port 8080...")
 	listener, err := net.Listen("tcp", HOST+":"+PORT)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Listen error\n")
-		return 1, nil
+		return 1
 	}
-	listener.Close()
 	conn, err := listener.Accept()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Accept error\n")
-		return 1, nil
+		return 1
 	}
 	numBytes, err := conn.Write([]byte("TESTING"))
 	if numBytes == 0 {
 		fmt.Fprintf(os.Stderr, "Read, somehow, read 0 bytes\n")
 	}
-	return 0, conn
+	return 0
 }
 
-func join() (int, net.Conn) {
+func join() int {
 	fmt.Println("Joining local server...")
 	conn, err := net.Dial("tcp", HOST+":"+PORT)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Dial error\n")
-		return 1, nil
+		return 1
 	}
 
 	message := make([]byte, 1024)
@@ -77,6 +77,6 @@ func join() (int, net.Conn) {
 	if err != nil || numBytes == 0 {
 		fmt.Fprintf(os.Stderr, "Read failed\n")
 	}
-
-	return 0, conn
+	fmt.Printf("%s\n", message)
+	return 0
 }
