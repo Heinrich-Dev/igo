@@ -9,9 +9,10 @@ fi
 # tmux isnt running, create a session and add a new window
 tmuxResult=$(pgrep tmux)
 if ["$tmuxResult" == ""]; then
-    tmux new -s igo 'go run .' \; split-window -h 'go run .'
+    tmux new -s igo 'go run .' \; split-window -h './igo'
 else
-    go run .
+    tmux select-pane -t 0
+    ./igo
     tmux select-pane -t 1
-    go run .
+    ./igo
 fi
