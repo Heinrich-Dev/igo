@@ -1,4 +1,4 @@
-package main
+package igo
 
 /*
 Henry Boekhoff
@@ -69,6 +69,7 @@ func main() {
 	// TODO: See if there's a way to replace this ugliness
 	connection.Read(boardSizeAsByte)
 	boardSize = int(boardSizeAsByte[0])
+
 }
 
 func createServer() (int, net.Conn) {
