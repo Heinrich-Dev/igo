@@ -1,5 +1,5 @@
 #!/bin/bash
-go build
+go build board.go igo.go
 
 # change this variable to 1 if tmux isn't your thing, and
 # you would rather just build the application
