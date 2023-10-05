@@ -17,5 +17,5 @@ fi
 tmuxOpen=$(pgrep tmux)
 
 if [[ "$tmuxOpen" == "" ]]; then
-    tmux new -s igo './igo' \; split-window -h './igo' \; select-pane -t 0
+    tmux new -s igo \; split-window -h \; select-pane -t 0 \; send-keys './igo'
 fi

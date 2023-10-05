@@ -21,11 +21,14 @@ const (
 	PORT = "8080"
 )
 
+/* Main serves to establish the connection between client and server and
+run the main game loop */
 func main() {
 	var response string
 	var connectionType int // 0 for host, 1 for client
 	var responded bool = false
 	var connection net.Conn // interface for client or server, returned by helper functions
+	// Setting up connection
 	for !responded {
 		fmt.Println("Would you like to host or connect? (h/c)")
 		fmt.Scanln(&response)
@@ -39,15 +42,28 @@ func main() {
 			fmt.Println("Did not specify connection type!")
 		}
 	}
+
 	if connectionType == -1 {
 		fmt.Fprintf(os.Stderr, "Error while trying to establish connection between client and server\n")
 	}
+
+	var boardSize int
+	responded = false
+	// Establishing board size
 	if connectionType == 0 {
-		connection.Write([]byte("TESTING"))
+		fmt.Printf("Client choosing board size...")
+		connection.Read()
 	} else {
-		message := make([]byte, 1024)
-		connection.Read(message)
-		fmt.Printf("%s\n", message)
+		for !responded {
+			fmt.Println("Choose size of the board. (9, 19)")
+			fmt.Println("9x9 board size recommended for beginnners. 19x19 board is standard.")
+			fmt.Scanln(&boardSize)
+			if boardSize == 9 || boardSize == 19 {
+				responded = true
+				fmt.Println("Board size must either be 9x9 or 19x19.")
+			}
+		}
+		connection.Write()
 	}
 }
 
