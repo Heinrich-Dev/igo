@@ -50,21 +50,25 @@ func main() {
 	var boardSize int
 	responded = false
 	// Establishing board size
+	boardSizeAsByte := []byte{0}
 	if connectionType == 0 {
-		fmt.Printf("Client choosing board size...")
-		connection.Read()
+		fmt.Println("Client choosing board size...")
 	} else {
-		for !responded {
+		for {
 			fmt.Println("Choose size of the board. (9, 19)")
 			fmt.Println("9x9 board size recommended for beginnners. 19x19 board is standard.")
 			fmt.Scanln(&boardSize)
 			if boardSize == 9 || boardSize == 19 {
-				responded = true
-				fmt.Println("Board size must either be 9x9 or 19x19.")
+				break
 			}
 		}
-		connection.Write()
+		// TODO: Write forces byte[], see if there's a way to send server just an int without needless conversion
+		boardSizeAsByte[0] = byte(boardSize)
+		connection.Write(boardSizeAsByte)
 	}
+	// TODO: See if there's a way to replace this ugliness
+	connection.Read(boardSizeAsByte)
+	boardSize = int(boardSizeAsByte[0])
 }
 
 func createServer() (int, net.Conn) {
