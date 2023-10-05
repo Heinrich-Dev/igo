@@ -1,4 +1,4 @@
-package igo
+package main
 
 /*
 Henry Boekhoff
@@ -12,13 +12,17 @@ Creating and accepting TCP connections: https://pkg.go.dev/net
 
 import (
 	"fmt"
+	"math/rand"
 	"net"
 	"os"
+	"time"
 )
 
 const (
-	HOST = "localhost"
-	PORT = "8080"
+	HOST  = "localhost"
+	PORT  = "8080"
+	WHITE = 1
+	RED   = 2
 )
 
 /* Main serves to establish the connection between client and server and
@@ -48,11 +52,23 @@ func main() {
 	}
 
 	var boardSize int
+	var color int
 	responded = false
 	// Establishing board size
-	boardSizeAsByte := []byte{0}
+	initialMessage := []byte{0}
+
 	if connectionType == 0 {
 		fmt.Println("Client choosing board size...")
+		// TODO: See if there's a way to replace this ugliness
+		// Get board size from client
+		connection.Read(initialMessage)
+		boardSize = int(initialMessage[0])
+		// Get random color and send to client
+		rand.Seed(time.Now().UnixNano())
+		color = rand.Intn(2) + 1
+		initialMessage[0] = byte(color)
+		connection.Write(initialMessage)
+
 	} else {
 		for {
 			fmt.Println("Choose size of the board. (9, 19)")
@@ -63,13 +79,18 @@ func main() {
 			}
 		}
 		// TODO: Write forces byte[], see if there's a way to send server just an int without needless conversion
-		boardSizeAsByte[0] = byte(boardSize)
-		connection.Write(boardSizeAsByte)
+		initialMessage[0] = byte(boardSize)
+		connection.Write(initialMessage)
+		// Get color
+		connection.Read(initialMessage)
+		color = int(initialMessage[0])
+		if color == RED {
+			color = WHITE
+		} else {
+			color = RED
+		}
 	}
-	// TODO: See if there's a way to replace this ugliness
-	connection.Read(boardSizeAsByte)
-	boardSize = int(boardSizeAsByte[0])
-
+	fmt.Printf("%d\n", color)
 }
 
 func createServer() (int, net.Conn) {
