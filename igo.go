@@ -16,6 +16,7 @@ import (
 	"net"
 	"os"
 	"time"
+	//"flag"
 )
 
 const (
@@ -32,6 +33,10 @@ func main() {
 	var connectionType int // 0 for host, 1 for client
 	var responded bool = false
 	var connection net.Conn // interface for client or server, returned by helper functions
+
+	//useFile := flag.Bool("f", false, "Using a file to setup board")
+	//flag.Parse()
+
 	// Setting up connection
 	for !responded {
 		fmt.Println("Would you like to host or connect? (h/c)")
@@ -84,13 +89,29 @@ func main() {
 		// Get color
 		connection.Read(initialMessage)
 		color = int(initialMessage[0])
-		if color == RED {
-			color = WHITE
-		} else {
+		if color == WHITE {
 			color = RED
+		} else {
+			color = WHITE
 		}
 	}
-	fmt.Printf("%d\n", color)
+	//board := make([][]byte, boardSize)
+
+	move := make([]byte, 2)
+	if color == RED {
+		GetUserInput(move, boardSize)
+		fmt.Printf("Your move: %d %d\n", move[0], move[1])
+		connection.Write(move)
+	}
+	for {
+		fmt.Println("Not your turn.")
+		connection.Read(move)
+		fmt.Printf("Your opponenet's move: %d %d\n", move[0], move[1])
+
+		GetUserInput(move, boardSize)
+		fmt.Printf("Your move: %d %d\n", move[0], move[1])
+		connection.Write(move)
+	}
 }
 
 func createServer() (int, net.Conn) {
