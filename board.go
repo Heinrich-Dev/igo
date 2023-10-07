@@ -9,24 +9,17 @@ func setupBoard(boardSize int) []byte {
 	return nil
 }
 
-// function takes in the bytes sent over the network and converts
-// them into two integers representing the column and the row
-// the player placed their piece on the other end
-func ByteToBoard() (int, int) {
-	return 0, 0
-}
-
-func BoardtoByte() {
+func PrintBoard(board [][]byte) {
 
 }
 
 func checkMove(move []byte, boardSize int) bool {
 	if move[0] < 1 || move[0] > byte(boardSize) {
-		fmt.Println("Column not in range of board")
+		fmt.Println("Column not in range of board.")
 		return false
 	}
 	if move[1] < 1 || move[1] > byte(boardSize) {
-		fmt.Println("Row not in range of board")
+		fmt.Println("Row not in range of board.")
 		return false
 	}
 	return true
@@ -43,4 +36,8 @@ func GetUserInput(move []byte, boardSize int) {
 			moved = true
 		}
 	}
+}
+
+func PlacePiece(move []byte, board [][]byte, color int) {
+	board[move[0]-1][move[1]-1] = byte(color)
 }

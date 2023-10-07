@@ -22,6 +22,7 @@ import (
 const (
 	HOST  = "localhost"
 	PORT  = "8080"
+	EMPTY = 0
 	WHITE = 1
 	RED   = 2
 )
@@ -58,14 +59,13 @@ func main() {
 
 	var boardSize int
 	var color int
+	var opponentColor int
 	responded = false
 	// Establishing board size
 	initialMessage := []byte{0}
 
 	if connectionType == 0 {
 		fmt.Println("Client choosing board size...")
-		// TODO: See if there's a way to replace this ugliness
-		// Get board size from client
 		connection.Read(initialMessage)
 		boardSize = int(initialMessage[0])
 		// Get random color and send to client
@@ -73,7 +73,11 @@ func main() {
 		color = rand.Intn(2) + 1
 		initialMessage[0] = byte(color)
 		connection.Write(initialMessage)
-
+		if color == WHITE {
+			opponentColor = RED
+		} else {
+			opponentColor = WHITE
+		}
 	} else {
 		for {
 			fmt.Println("Choose size of the board. (9, 19)")
@@ -83,34 +87,42 @@ func main() {
 				break
 			}
 		}
-		// TODO: Write forces byte[], see if there's a way to send server just an int without needless conversion
 		initialMessage[0] = byte(boardSize)
 		connection.Write(initialMessage)
-		// Get color
 		connection.Read(initialMessage)
-		color = int(initialMessage[0])
-		if color == WHITE {
+		opponentColor = int(initialMessage[0])
+		if opponentColor == WHITE {
 			color = RED
 		} else {
 			color = WHITE
 		}
 	}
-	//board := make([][]byte, boardSize)
+	board := make([][]byte, boardSize, boardSize)
+	for i := 0; i < boardSize; i++ {
+		board[i] = make([]byte, boardSize)
+	}
+	fmt.Println(board)
 
 	move := make([]byte, 2)
 	if color == RED {
 		GetUserInput(move, boardSize)
+		PlacePiece(move, board, color)
 		fmt.Printf("Your move: %d %d\n", move[0], move[1])
 		connection.Write(move)
+		fmt.Println(board)
 	}
 	for {
 		fmt.Println("Not your turn.")
 		connection.Read(move)
+		PlacePiece(move, board, opponentColor)
 		fmt.Printf("Your opponenet's move: %d %d\n", move[0], move[1])
+		fmt.Println(board)
 
 		GetUserInput(move, boardSize)
+		PlacePiece(move, board, color)
 		fmt.Printf("Your move: %d %d\n", move[0], move[1])
 		connection.Write(move)
+		fmt.Println(board)
 	}
 }
 
