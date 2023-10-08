@@ -105,7 +105,7 @@ func main() {
 
 	move := make([]byte, 2)
 	if color == RED {
-		GetUserInput(move, boardSize)
+		GetUserInput(move, board, boardSize)
 		PlacePiece(move, board, color)
 		fmt.Printf("Your move: %d %d\n", move[0], move[1])
 		connection.Write(move)
@@ -118,7 +118,7 @@ func main() {
 		fmt.Printf("Your opponenet's move: %d %d\n", move[0], move[1])
 		fmt.Println(board)
 
-		GetUserInput(move, boardSize)
+		GetUserInput(move, board, boardSize)
 		PlacePiece(move, board, color)
 		fmt.Printf("Your move: %d %d\n", move[0], move[1])
 		connection.Write(move)

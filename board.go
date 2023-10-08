@@ -13,7 +13,7 @@ func PrintBoard(board [][]byte) {
 
 }
 
-func checkMove(move []byte, boardSize int) bool {
+func checkMove(move []byte, board [][]byte, boardSize int) bool {
 	if move[0] < 1 || move[0] > byte(boardSize) {
 		fmt.Println("Column not in range of board.")
 		return false
@@ -22,17 +22,21 @@ func checkMove(move []byte, boardSize int) bool {
 		fmt.Println("Row not in range of board.")
 		return false
 	}
+	if board[move[0]-1][move[1]-1] != 0 {
+		fmt.Println("There is already a piece in that space.")
+		return false
+	}
 	return true
 }
 
-func GetUserInput(move []byte, boardSize int) {
+func GetUserInput(move []byte, board [][]byte, boardSize int) {
 	var moved bool = false
 	for !moved {
 		fmt.Println("Enter the column and row, space separated, that you would like to place your piece. (col row)")
 		move[0] = 0
 		move[1] = 0
 		fmt.Scanln(&move[0], &move[1])
-		if checkMove(move, boardSize) {
+		if checkMove(move, board, boardSize) {
 			moved = true
 		}
 	}
