@@ -8,6 +8,7 @@ machine can play with one another.
 REFERENCES:
 Inspired by Lachlan Imel's termChess: https://github.com/brochacho01/termChess
 Creating and accepting TCP connections: https://pkg.go.dev/net
+Colored terminal output: https://twin.sh/articles/35/how-to-add-colors-to-your-console-terminal-output-in-go
 */
 
 import (
@@ -101,7 +102,7 @@ func main() {
 	for i := 0; i < boardSize; i++ {
 		board[i] = make([]byte, boardSize)
 	}
-	fmt.Println(board)
+	PrintBoard(board, boardSize)
 
 	move := make([]byte, 2)
 	if color == RED {
@@ -109,20 +110,20 @@ func main() {
 		PlacePiece(move, board, color)
 		fmt.Printf("Your move: %d %d\n", move[0], move[1])
 		connection.Write(move)
-		fmt.Println(board)
+		PrintBoard(board, boardSize)
 	}
 	for {
 		fmt.Println("Not your turn.")
 		connection.Read(move)
 		PlacePiece(move, board, opponentColor)
 		fmt.Printf("Your opponenet's move: %d %d\n", move[0], move[1])
-		fmt.Println(board)
+		PrintBoard(board, boardSize)
 
 		GetUserInput(move, board, boardSize)
 		PlacePiece(move, board, color)
 		fmt.Printf("Your move: %d %d\n", move[0], move[1])
 		connection.Write(move)
-		fmt.Println(board)
+		PrintBoard(board, boardSize)
 	}
 }
 

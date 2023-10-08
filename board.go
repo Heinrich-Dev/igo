@@ -4,13 +4,43 @@ import (
 	"fmt"
 )
 
-// sets the board up to be sent between players
-func setupBoard(boardSize int) []byte {
-	return nil
-}
+const (
+	colorReset = "\033[0m"
+	colorRed   = "\033[31m"
+)
 
-func PrintBoard(board [][]byte) {
-
+func PrintBoard(board [][]byte, boardSize int) {
+	fmt.Printf("  ")
+	for i := 1; i <= boardSize; i++ {
+		fmt.Printf("%d ", i)
+	}
+	fmt.Println()
+	for i := 0; i < boardSize; i++ {
+		fmt.Printf("%d ", i+1)
+		for j := 0; j < boardSize-1; j++ {
+			if board[i][j] == EMPTY {
+				fmt.Printf(" -")
+			} else if board[i][j] == WHITE {
+				fmt.Printf("0-")
+			} else {
+				fmt.Printf(colorRed + "0" + colorReset)
+				fmt.Printf("-")
+			}
+		}
+		if board[i][boardSize-1] == EMPTY {
+			fmt.Printf(" ")
+		} else if board[i][boardSize-1] == WHITE {
+			fmt.Printf("0")
+		} else {
+			fmt.Printf(colorRed + "0" + colorReset)
+		}
+		fmt.Println()
+	}
+	fmt.Printf("  ")
+	for i := 1; i <= boardSize; i++ {
+		fmt.Printf("%d ", i)
+	}
+	fmt.Println()
 }
 
 func checkMove(move []byte, board [][]byte, boardSize int) bool {
