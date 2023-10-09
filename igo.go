@@ -8,17 +8,24 @@ machine can play with one another.
 REFERENCES:
 Inspired by Lachlan Imel's termChess: https://github.com/brochacho01/termChess
 Creating and accepting TCP connections: https://pkg.go.dev/net
+Colored terminal output: https://twin.sh/articles/35/how-to-add-colors-to-your-console-terminal-output-in-go
 */
 
 import (
 	"fmt"
+	"math/rand"
 	"net"
 	"os"
+	"time"
+	//"flag"
 )
 
 const (
-	HOST = "localhost"
-	PORT = "8080"
+	HOST  = "localhost"
+	PORT  = "8080"
+	EMPTY = 0
+	WHITE = 1
+	RED   = 2
 )
 
 /* Main serves to establish the connection between client and server and
@@ -28,6 +35,10 @@ func main() {
 	var connectionType int // 0 for host, 1 for client
 	var responded bool = false
 	var connection net.Conn // interface for client or server, returned by helper functions
+
+	//useFile := flag.Bool("f", false, "Using a file to setup board")
+	//flag.Parse()
+
 	// Setting up connection
 	for !responded {
 		fmt.Println("Would you like to host or connect? (h/c)")
@@ -48,11 +59,26 @@ func main() {
 	}
 
 	var boardSize int
+	var color int
+	var opponentColor int
 	responded = false
 	// Establishing board size
-	boardSizeAsByte := []byte{0}
+	initialMessage := []byte{0}
+
 	if connectionType == 0 {
 		fmt.Println("Client choosing board size...")
+		connection.Read(initialMessage)
+		boardSize = int(initialMessage[0])
+		// Get random color and send to client
+		rand.Seed(time.Now().UnixNano())
+		color = rand.Intn(2) + 1
+		initialMessage[0] = byte(color)
+		connection.Write(initialMessage)
+		if color == WHITE {
+			opponentColor = RED
+		} else {
+			opponentColor = WHITE
+		}
 	} else {
 		for {
 			fmt.Println("Choose size of the board. (9, 19)")
@@ -62,13 +88,43 @@ func main() {
 				break
 			}
 		}
-		// TODO: Write forces byte[], see if there's a way to send server just an int without needless conversion
-		boardSizeAsByte[0] = byte(boardSize)
-		connection.Write(boardSizeAsByte)
+		initialMessage[0] = byte(boardSize)
+		connection.Write(initialMessage)
+		connection.Read(initialMessage)
+		opponentColor = int(initialMessage[0])
+		if opponentColor == WHITE {
+			color = RED
+		} else {
+			color = WHITE
+		}
 	}
-	// TODO: See if there's a way to replace this ugliness
-	connection.Read(boardSizeAsByte)
-	boardSize = int(boardSizeAsByte[0])
+	board := make([][]byte, boardSize, boardSize)
+	for i := 0; i < boardSize; i++ {
+		board[i] = make([]byte, boardSize)
+	}
+	PrintBoard(board, boardSize)
+
+	move := make([]byte, 2)
+	if color == RED {
+		GetUserInput(move, board, boardSize)
+		PlacePiece(move, board, color)
+		fmt.Printf("Your move: %d %d\n", move[0], move[1])
+		connection.Write(move)
+		PrintBoard(board, boardSize)
+	}
+	for {
+		fmt.Println("Not your turn.")
+		connection.Read(move)
+		PlacePiece(move, board, opponentColor)
+		fmt.Printf("Your opponenet's move: %d %d\n", move[0], move[1])
+		PrintBoard(board, boardSize)
+
+		GetUserInput(move, board, boardSize)
+		PlacePiece(move, board, color)
+		fmt.Printf("Your move: %d %d\n", move[0], move[1])
+		connection.Write(move)
+		PrintBoard(board, boardSize)
+	}
 }
 
 func createServer() (int, net.Conn) {
