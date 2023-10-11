@@ -10,35 +10,47 @@ const (
 )
 
 func PrintBoard(board [][]byte, boardSize int) {
-	fmt.Printf("  ")
-	for i := 1; i <= boardSize; i++ {
-		fmt.Printf("%d ", i)
+	fmt.Print("   ")
+	for i := 0; i < boardSize; i++ {
+		if i+1 < 10 {
+			fmt.Printf("%d  ", i+1)
+		} else {
+			fmt.Printf("%d ", i+1)
+		}
 	}
 	fmt.Println()
 	for i := 0; i < boardSize; i++ {
-		fmt.Printf("%d ", i+1)
+		if i+1 < 10 {
+			fmt.Printf("%d  ", i+1)
+		} else {
+			fmt.Printf("%d ", i+1)
+		}
 		for j := 0; j < boardSize-1; j++ {
-			if board[i][j] == EMPTY {
-				fmt.Printf(" -")
-			} else if board[i][j] == WHITE {
-				fmt.Printf("0-")
+			if board[j][i] == EMPTY {
+				fmt.Print("*--")
+			} else if board[j][i] == WHITE {
+				fmt.Print("0--")
 			} else {
-				fmt.Printf(colorRed + "0" + colorReset)
-				fmt.Printf("-")
+				fmt.Print(colorRed + "0" + colorReset)
+				fmt.Print("--")
 			}
 		}
-		if board[i][boardSize-1] == EMPTY {
-			fmt.Printf(" ")
-		} else if board[i][boardSize-1] == WHITE {
-			fmt.Printf("0")
-		} else {
-			fmt.Printf(colorRed + "0" + colorReset)
+		fmt.Printf("* %d\n", i+1)
+		if i != boardSize-1 {
+			fmt.Print("   ")
+			for k := 0; k < boardSize-1; k++ {
+				fmt.Print("|  ")
+			}
+			fmt.Println("|")
 		}
-		fmt.Println()
 	}
-	fmt.Printf("  ")
-	for i := 1; i <= boardSize; i++ {
-		fmt.Printf("%d ", i)
+	fmt.Print("   ")
+	for i := 0; i < boardSize; i++ {
+		if i+1 < 10 {
+			fmt.Printf("%d  ", i+1)
+		} else {
+			fmt.Printf("%d ", i+1)
+		}
 	}
 	fmt.Println()
 }
