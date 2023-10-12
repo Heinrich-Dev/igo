@@ -26,9 +26,9 @@ func PrintBoard(board [][]byte, boardSize int) {
 			fmt.Printf("%d ", i+1)
 		}
 		for j := 0; j < boardSize-1; j++ {
-			if board[j][i] == EMPTY {
+			if board[i][j] == EMPTY {
 				fmt.Print("*--")
-			} else if board[j][i] == WHITE {
+			} else if board[i][j] == WHITE {
 				fmt.Print("0--")
 			} else {
 				fmt.Print(colorRed + "0" + colorReset)
@@ -73,13 +73,17 @@ func checkMove(move []byte, board [][]byte, boardSize int) bool {
 
 func GetUserInput(move []byte, board [][]byte, boardSize int) {
 	var moved bool = false
+	var response string = ""
 	for !moved {
 		fmt.Println("Enter the column and row, space separated, that you would like to place your piece. (col row)")
+		fmt.Println("Or type 'p' to pass.")
 		move[0] = 0
 		move[1] = 0
-		fmt.Scanln(&move[0], &move[1])
-		if checkMove(move, board, boardSize) {
+		fmt.Scanln(&response)
+		if response == "p" {
 			moved = true
+		} else {
+			moved = checkMove(move, board, boardSize)
 		}
 	}
 }
