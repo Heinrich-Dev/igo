@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 const (
@@ -61,12 +62,19 @@ func checkMove(move []byte, board [][]byte, boardSize int) bool {
 
 func GetUserInput(move []byte, board [][]byte, boardSize int) {
 	var moved bool = false
+	var response1, response2 string
 	for !moved {
 		fmt.Println("Enter the column and row, space separated, that you would like to place your piece. (col row)")
-		move[0] = 0
-		move[1] = 0
-		fmt.Scanln(&move[0], &move[1])
-		if checkMove(move, board, boardSize) {
+		fmt.Scanln(&response1, &response2)
+		if response1 == "p" {
+			move[0] = 0
+			move[1] = 0
+			moved = true
+		} else {
+			response := response1 + " " + response2
+			responseReader := strings.NewReader(response)
+			fmt.Fscan(responseReader, &move[0], &move[1])
+			checkMove(move, board, boardSize)
 			moved = true
 		}
 	}

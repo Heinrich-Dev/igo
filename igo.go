@@ -107,21 +107,33 @@ func main() {
 	move := make([]byte, 2)
 	if color == RED {
 		GetUserInput(move, board, boardSize)
-		PlacePiece(move, board, color)
-		fmt.Printf("Your move: %d %d\n", move[0], move[1])
+		if move[0] != 0 {
+			PlacePiece(move, board, color)
+			fmt.Printf("Your move: %d %d\n", move[0], move[1])
+		} else {
+			fmt.Println("Skipped turn!")
+		}
 		connection.Write(move)
 		PrintBoard(board, boardSize)
 	}
 	for {
 		fmt.Println("Not your turn.")
 		connection.Read(move)
-		PlacePiece(move, board, opponentColor)
-		fmt.Printf("Your opponenet's move: %d %d\n", move[0], move[1])
+		if move[0] != 0 {
+			PlacePiece(move, board, opponentColor)
+			fmt.Printf("Your opponent's move: %d %d\n", move[0], move[1])
+		} else {
+			fmt.Println("Opponent skipped turn!")
+		}
 		PrintBoard(board, boardSize)
 
 		GetUserInput(move, board, boardSize)
-		PlacePiece(move, board, color)
-		fmt.Printf("Your move: %d %d\n", move[0], move[1])
+		if move[0] != 0 {
+			PlacePiece(move, board, color)
+			fmt.Printf("Your move: %d %d\n", move[0], move[1])
+		} else {
+			fmt.Println("Skipped turn!")
+		}
 		connection.Write(move)
 		PrintBoard(board, boardSize)
 	}
