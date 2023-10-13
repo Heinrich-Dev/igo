@@ -111,7 +111,11 @@ func main() {
 			PlacePiece(move, board, color)
 			fmt.Printf("Your move: %d %d\n", move[0], move[1])
 		} else {
+<<<<<<< HEAD
 			fmt.Println("Skipped turn!")
+=======
+			fmt.Println("Passed turn!")
+>>>>>>> d654504391a53f54086cc27f514e3d35d813facd
 		}
 		connection.Write(move)
 		PrintBoard(board, boardSize)
@@ -120,10 +124,17 @@ func main() {
 		fmt.Println("Not your turn.")
 		connection.Read(move)
 		if move[0] != 0 {
+<<<<<<< HEAD
 			PlacePiece(move, board, opponentColor)
 			fmt.Printf("Your opponent's move: %d %d\n", move[0], move[1])
 		} else {
 			fmt.Println("Opponent skipped turn!")
+=======
+			PlacePiece(move, board, color)
+			fmt.Printf("Your opponent's move: %d %d\n", move[0], move[1])
+		} else {
+			fmt.Println("Opponent passed!")
+>>>>>>> d654504391a53f54086cc27f514e3d35d813facd
 		}
 		PrintBoard(board, boardSize)
 
@@ -132,7 +143,11 @@ func main() {
 			PlacePiece(move, board, color)
 			fmt.Printf("Your move: %d %d\n", move[0], move[1])
 		} else {
+<<<<<<< HEAD
 			fmt.Println("Skipped turn!")
+=======
+			fmt.Println("Passed turn!")
+>>>>>>> d654504391a53f54086cc27f514e3d35d813facd
 		}
 		connection.Write(move)
 		PrintBoard(board, boardSize)
