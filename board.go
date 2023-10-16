@@ -72,23 +72,30 @@ func checkMove(move []byte, board [][]byte, boardSize int) bool {
 	return true
 }
 
-func GetUserInput(move []byte, board [][]byte, boardSize int) {
-	var moved bool = false
+// gets user input if they would like to move or pass, then
+// checks if the given move is valid in the following ways:
+//		ensures the placement of the piece is on the board
+//		ensures the piece being placed is not surrounded (if no captures occur)
+//		ensures ko rule is followed (no repeated board positions)
+func GetUserInput(move []byte, board [][]byte, boardSize int, color int) {
 	var response1, response2 string
-	for !moved {
+	for {
 		fmt.Println("Enter the column and row, space separated, that you would like to place your piece. (col row)")
 		fmt.Scanln(&response1, &response2)
 		if response1 == "p" {
 			move[0] = 0
 			move[1] = 0
-			moved = true
-		} else {
-			response := response1 + " " + response2
-			responseReader := strings.NewReader(response)
-			fmt.Fscan(responseReader, &move[0], &move[1])
-			checkMove(move, board, boardSize)
-			moved = checkMove(move, board, boardSize)
+			break
 		}
+		response := response1 + " " + response2
+		responseReader := strings.NewReader(response)
+		fmt.Fscan(responseReader, &move[0], &move[1])
+		if !checkMove(move, board, boardSize) { // check if move is in bounds
+			break
+		}
+		translatedMove := []byte{move[0] - 1, move[1] - 1} //translate into 0-indexed coords
+		Capture(translatedMove, board, color)
+		break // check if move captured any pieces and if piece is surrounded
 	}
 }
 

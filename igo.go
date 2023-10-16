@@ -106,7 +106,7 @@ func main() {
 
 	move := make([]byte, 2)
 	if color == RED {
-		GetUserInput(move, board, boardSize)
+		GetUserInput(move, board, boardSize, color)
 		if move[0] != 0 {
 			PlacePiece(move, board, color)
 			fmt.Printf("Your move: %d %d\n", move[0], move[1])
@@ -127,7 +127,7 @@ func main() {
 		}
 		PrintBoard(board, boardSize)
 
-		GetUserInput(move, board, boardSize)
+		GetUserInput(move, board, boardSize, color)
 		if move[0] != 0 {
 			PlacePiece(move, board, color)
 			fmt.Printf("Your move: %d %d\n", move[0], move[1])
