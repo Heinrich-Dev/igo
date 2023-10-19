@@ -57,15 +57,15 @@ func PrintBoard(board [][]byte, boardSize int) {
 }
 
 func checkMove(move []byte, board [][]byte, boardSize int) bool {
-	if move[0] < 1 || move[0] > byte(boardSize) {
+	if move[0] < 0 || move[0] > byte(boardSize)-1 {
 		fmt.Println("Column not in range of board.")
 		return false
 	}
-	if move[1] < 1 || move[1] > byte(boardSize) {
+	if move[1] < 0 || move[1] > byte(boardSize)-1 {
 		fmt.Println("Row not in range of board.")
 		return false
 	}
-	if board[move[0]-1][move[1]-1] != 0 {
+	if board[move[0]][move[1]] != 0 {
 		fmt.Println("There is already a piece in that space.")
 		return false
 	}
@@ -79,26 +79,29 @@ func checkMove(move []byte, board [][]byte, boardSize int) bool {
 //		ensures ko rule is followed (no repeated board positions)
 func GetUserInput(move []byte, board [][]byte, boardSize int, color int) {
 	var response1, response2 string
-	for {
-		fmt.Println("Enter the column and row, space separated, that you would like to place your piece. (col row)")
+	var moved bool = false
+	for !moved {
+		fmt.Println("Enter the row and column, space separated, that you would like to place your piece. (row col)")
 		fmt.Scanln(&response1, &response2)
 		if response1 == "p" {
-			move[0] = 0
-			move[1] = 0
+			move[0] = 255
+			move[1] = 255
 			break
 		}
 		response := response1 + " " + response2
 		responseReader := strings.NewReader(response)
 		fmt.Fscan(responseReader, &move[0], &move[1])
-		if !checkMove(move, board, boardSize) { // check if move is in bounds
-			break
-		}
-		translatedMove := []byte{move[0] - 1, move[1] - 1} //translate into 0-indexed coords
-		Capture(translatedMove, board, color)
-		break // check if move captured any pieces and if piece is surrounded
+		translate(move)
+		moved = checkMove(move, board, boardSize)
+		//moved = !(Capture(move, board, color))
 	}
 }
 
+func translate(move []byte) {
+	move[0] = move[0] - 1
+	move[1] = move[1] - 1
+}
+
 func PlacePiece(move []byte, board [][]byte, color int) {
-	board[move[0]-1][move[1]-1] = byte(color)
+	board[move[0]][move[1]] = byte(color)
 }

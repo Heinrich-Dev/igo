@@ -19,7 +19,7 @@ func kill(row byte, col byte, board [][]byte, checked [][]byte, color int) {
 	}
 }
 
-func Capture(move []byte, board [][]byte, color int) {
+func Capture(move []byte, board [][]byte, color int) bool {
 	row := move[0]
 	col := move[1]
 	boardSize := len(board)
@@ -47,7 +47,7 @@ func Capture(move []byte, board [][]byte, color int) {
 			kill(row, col+1, board, checked, color)
 		}
 	}
-	Surrounded(row, col, board, checked, color)
+	return Surrounded(row, col, board, checked, color)
 }
 
 func Surrounded(row byte, col byte, board [][]byte, checked [][]byte, color int) bool {
