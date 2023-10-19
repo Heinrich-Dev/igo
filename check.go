@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 // I pray that all of this typecasting does not cause any issues because
 // I am only working with positive numbers. - Past Henry
 
@@ -19,6 +21,7 @@ func kill(row byte, col byte, board [][]byte, checked [][]byte, color int) {
 	}
 }
 
+// returns true if given move does not result in the loss of the placed piece
 func Capture(move []byte, board [][]byte, color int) bool {
 	row := move[0]
 	col := move[1]
@@ -29,49 +32,65 @@ func Capture(move []byte, board [][]byte, color int) bool {
 	}
 	if row != 0 {
 		if Surrounded(row-1, col, board, checked, color) {
+			fmt.Println("Piece captured!")
 			kill(row-1, col, board, checked, color)
 		}
 	}
-	if row != byte(len(board)) {
+	if row != byte(len(board))-1 {
 		if Surrounded(row+1, col, board, checked, color) {
+			fmt.Println("Piece captured!")
 			kill(row+1, col, board, checked, color)
 		}
 	}
 	if col != 0 {
 		if Surrounded(row, col-1, board, checked, color) {
+			fmt.Println("Piece captured!")
 			kill(row, col-1, board, checked, color)
 		}
 	}
-	if col != byte(len(board)) {
+	if col != byte(len(board))-1 {
 		if Surrounded(row, col+1, board, checked, color) {
+			fmt.Println("Piece captured!")
 			kill(row, col+1, board, checked, color)
 		}
 	}
-	return Surrounded(row, col, board, checked, color)
+	return !(Surrounded(row, col, board, checked, color))
 }
 
+// returns true if given piece is surrounded and should be killed
 func Surrounded(row byte, col byte, board [][]byte, checked [][]byte, color int) bool {
-	if surroundCheck(row, col, board, checked, color) == 4 {
+	if surroundCheck(row, col, board, checked, color) == 0 {
 		return true
 	}
 	return false
 }
 
+// returns an integer. If 0, that means the piece in question is completely surrounded.
+// Any positive integer means the piece has at least one liberty free and does not need
+// to be removed from the board.
+// Total increases as more spaces are checked, a piece in the middle needs to be surrounded
+// on all four liberties. A piece on the side needs to have 3 liberties surrounded and
+// a piece in the corner needs only two.
 func surroundCheck(row byte, col byte, board [][]byte, checked [][]byte, color int) int {
 	var tally int
+	total := 0
 	if row != 0 {
+		total++
 		tally += surroundCheckHelper(row-1, col, board, checked, color)
 	}
-	if row != byte(len(board)) {
+	if row != byte(len(board))-1 {
+		total++
 		tally += surroundCheckHelper(row+1, col, board, checked, color)
 	}
 	if col != 0 {
+		total++
 		tally += surroundCheckHelper(row, col-1, board, checked, color)
 	}
-	if col != byte(len(board)) {
+	if col != byte(len(board))-1 {
+		total++
 		tally += surroundCheckHelper(row, col+1, board, checked, color)
 	}
-	return tally
+	return (total - tally)
 }
 
 // returns 1 if current piece is surrounded and 0 otherwise

@@ -12,6 +12,7 @@ const (
 
 func PrintBoard(board [][]byte, boardSize int) {
 	fmt.Print("   ")
+	// print numbers at top of board
 	for i := 0; i < boardSize; i++ {
 		if i+1 < 10 {
 			fmt.Printf("%d  ", i+1)
@@ -36,7 +37,14 @@ func PrintBoard(board [][]byte, boardSize int) {
 				fmt.Print("--")
 			}
 		}
-		fmt.Printf("* %d\n", i+1)
+		if board[i][boardSize-1] == EMPTY {
+			fmt.Printf("* %d\n", i+1)
+		} else if board[i][boardSize-1] == WHITE {
+			fmt.Printf("0 %d\n", i+1)
+		} else {
+			fmt.Print(colorRed + "0" + colorReset)
+			fmt.Printf(" %d\n", i+1)
+		}
 		if i != boardSize-1 {
 			fmt.Print("   ")
 			for k := 0; k < boardSize-1; k++ {
@@ -45,6 +53,7 @@ func PrintBoard(board [][]byte, boardSize int) {
 			fmt.Println("|")
 		}
 	}
+	// print numbers at bottom of board
 	fmt.Print("   ")
 	for i := 0; i < boardSize; i++ {
 		if i+1 < 10 {
@@ -92,8 +101,13 @@ func GetUserInput(move []byte, board [][]byte, boardSize int, color int) {
 		responseReader := strings.NewReader(response)
 		fmt.Fscan(responseReader, &move[0], &move[1])
 		translate(move)
-		moved = checkMove(move, board, boardSize)
-		//moved = !(Capture(move, board, color))
+		if checkMove(move, board, boardSize) {
+			if Capture(move, board, color) {
+				moved = true
+			} else {
+				fmt.Printf("Placing piece on %d %d will cause the loss of the piece. Try again.\n", move[0], move[1])
+			}
+		}
 	}
 }
 
